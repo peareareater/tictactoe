@@ -5,3 +5,5 @@ export default {
     closeError: 'closeError',
     setError: 'setError',
 }
+
+export const ACCESS_TOKEN = 'accessToken'

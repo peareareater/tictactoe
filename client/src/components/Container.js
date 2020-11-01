@@ -10,8 +10,10 @@ const useRootStyles = makeStyles((theme) => ({
     },
 }))
 
-export default function Container({ children }) {
+const initialMaxWidth = '100%';
+
+export default function Container({ children, maxWidth = initialMaxWidth }) {
     const root = useRootStyles()
 
-    return <div className={root.container}>{children}</div>
+    return <div className={root.container} style={{ maxWidth }}>{children}</div>
 }

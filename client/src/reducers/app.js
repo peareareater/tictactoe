@@ -8,7 +8,7 @@ const app = (store = initialState, { payload, type }) => {
     switch (type) {
         case actionTypes.setError:
             return { ...store, errors: store.errors.concat(payload) }
-        case actionTypes.setError:
+        case actionTypes.closeError:
             const errorIndex = store.errors.findIndex((i) => i.id === payload)
             return {
                 ...store,
@@ -19,4 +19,4 @@ const app = (store = initialState, { payload, type }) => {
     }
 }
 
-export default user
+export default app

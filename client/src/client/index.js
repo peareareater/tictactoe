@@ -1,8 +1,9 @@
 import axios from 'axios'
-const API_URL = 'http://localhost:8080'
 import { dispatch } from '../store'
 import commonActionTypes from '../constants/index'
 import { v4 } from 'uuid'
+
+const API_URL = 'http://localhost:8080'
 
 const methods = {
     get: 'get',
@@ -14,11 +15,8 @@ async function call(method, url, params) {
         console.log(result)
         return result.data
     } catch (e) {
-        dispatch({
-            type: commonActionTypes.setError,
-            payload: { message: e.message, id: v4() },
-        })
-        return e.message;
+        const data = e && e.response && e.response.data.message
+        throw data || e.message
     }
 }
 export default {

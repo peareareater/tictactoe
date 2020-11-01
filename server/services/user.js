@@ -2,11 +2,11 @@ import db from '../db/index'
 const User = db.User;
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken'
+import config from '../config'
 
 async function authenticate({ email, password }) {
     const user = await User.findOne({ email });
     if (user && bcrypt.compareSync(password, user.hash)) {
-        let config
         const token = jwt.sign({ sub: user.id }, config.secret, {
             expiresIn: "1d",
         });

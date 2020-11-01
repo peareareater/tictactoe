@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import Paper from '@material-ui/core/Paper'
 import Container from '../components/Container'
 import { capitalize, getFormConfig, validateFields } from '../helpers/common'
@@ -7,35 +7,17 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import AppBar from '@material-ui/core/AppBar'
 import { passwordsDoNotMatch } from '../constants'
+import { v4 } from 'uuid'
+import { authConfig, fields, tabs } from '../constants/auth'
 
-const tabs = {
-    login: 'login',
-    register: 'register',
-}
-
-const fields = {
-    [tabs.login]: [
-        { name: 'email', type: 'email' },
-        { name: 'password', type: 'password' },
-    ],
-    [tabs.register]: [
-        { name: 'username', type: 'text' },
-        { name: 'email', type: 'email' },
-        { name: 'password', type: 'password' },
-        { name: 'repeat_password', type: 'password' },
-    ],
-}
-
-const authConfig = {
-    [tabs.login]: getFormConfig(fields.login),
-    [tabs.register]: getFormConfig(fields.register),
-}
-
-export default function Auth({ login, register }) {
-    const [tab, setTab] = React.useState(tabs.login)
+export default function Auth({ login, register, user, removeError, location }) {
+    const initialTab = location.state && location.state.tab || 0
+    const [tab, setTab] = React.useState(initialTab)
+    const tabKeys = Object.values(tabs)
+    const tabName = tabKeys[tab]
 
     const onSubmit = (values) => {
-        if (tab === tabs.login) {
+        if (tabName === tabs.login) {
             login(values)
         } else {
             register(values)
@@ -43,45 +25,47 @@ export default function Auth({ login, register }) {
     }
 
     const handleChange = (_, value) => {
-        setTab(Object.values(tabs)[value])
+        removeError()
+        setTab(value)
     }
 
     const validate = {
         [tabs.login]: (values) => {
-            const errors = validateFields(
+            return validateFields(
                 values,
-                fields[tab].map((item) => item.name)
+                fields[tabName].map((item) => item.name)
             )
-            return errors
         },
         [tabs.register]: (values) => {
             const errors = validateFields(
                 values,
-                fields[tab].map((item) => item.name)
+                fields[tabName].map((item) => item.name)
             )
             if (values.password !== values.repeat_password) {
-                errors.password = passwordsDoNotMatch;
-                errors.repeat_password = passwordsDoNotMatch;
+                errors.password = passwordsDoNotMatch
+                errors.repeat_password = passwordsDoNotMatch
             }
             return errors
         },
     }
     return (
-        <Container>
+        <Container maxWidth={700}>
             <AppBar position="static">
                 <Tabs variant="fullWidth" value={tab} onChange={handleChange}>
-                    {Object.values(tabs).map((tab) => (
-                        <Tab label={capitalize(tab)} />
+                    {Object.values(tabs).map((tabTitle) => (
+                        <Tab key={v4()} label={capitalize(tabTitle)} />
                     ))}
                 </Tabs>
             </AppBar>
             <Paper>
                 <Form
-                    fields={authConfig[tab]}
+                    loading={user.loading}
+                    error={user.error}
+                    fields={authConfig[tabName]}
                     onSubmit={onSubmit}
                     variant="filled"
-                    validate={validate[tab]}
-                    label={capitalize(tab)}
+                    validate={validate[tabName]}
+                    label={capitalize(tabName)}
                 />
             </Paper>
         </Container>

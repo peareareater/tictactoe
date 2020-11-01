@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import reportWebVitals from './reportWebVitals'
 import './index.css'
 import App from './App'
-import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
-import { store } from './store'
+import { configureStore, store } from './store'
 import { MuiThemeProvider, CssBaseline } from '@material-ui/core'
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
 import blue from '@material-ui/core/colors/blue'
+import history from './lib/history';
 
 const theme = createMuiTheme({
     palette: {
@@ -30,14 +31,12 @@ const theme = createMuiTheme({
 
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
+        <Provider store={configureStore(history)}>
             <MuiThemeProvider theme={theme}>
                 <CssBaseline />
                 <App />
             </MuiThemeProvider>
-        </Provider>
-    </React.StrictMode>,
+        </Provider>,
     document.getElementById('root')
 )
 

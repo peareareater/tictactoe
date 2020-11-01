@@ -1,28 +1,33 @@
 import React from 'react'
 import './App.css'
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Router, Switch, Route } from 'react-router-dom'
 import routes from './router/routes'
-import Route from './router/Route'
 import AppBar from './containers/AppBar'
 import { connect } from 'react-redux'
-import SnackBars from './containers/SnackBars'
+import { v4 } from 'uuid'
+import history from './lib/history'
+import NotFound from './pages/NotFound'
 
 function App({ isAuthenticated }) {
     return (
-        <>
-            <Router>
-                <AppBar isAuthenticated={isAuthenticated} />
-                <Switch>
-                    {routes.map((route) => (
+        <Router history={history}>
+            <AppBar isAuthenticated={isAuthenticated} />
+            <Switch>
+                {routes.map((route) => {
+                    return (
                         <Route
-                            route={route}
-                            isAuthenticated={isAuthenticated}
+                            key={v4()}
+                            path={route.path}
+                            exact={route.exact}
+                            component={route.component}
                         />
-                    ))}
-                </Switch>
-            </Router>
-            <SnackBars />
-        </>
+                    )
+                })}
+                <Route path="*" component={NotFound}>
+                    <NotFound />
+                </Route>
+            </Switch>
+        </Router>
     )
 }
 
